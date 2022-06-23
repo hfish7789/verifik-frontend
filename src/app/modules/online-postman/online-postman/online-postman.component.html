@@ -1,0 +1,186 @@
+<div
+    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
+    cdkScrollable>
+    <div class="relative flex-0 py-8 px-4 sm:p-16 overflow-hidden bg-gray-800 dark">
+        <!-- @formatter:on -->
+        <div class="z-10 relative flex flex-col items-center">
+            <div class="mt-1 text-4xl sm:text-7xl font-extrabold tracking-tight leading-tight text-center">
+                Consulta nuestro API
+            </div>
+            <div class="max-w-2xl mt-6 sm:text-2xl text-center tracking-tight text-secondary">
+            Recuerda seleccionar con un clic las tarjetas que deseas consultar y llenar la información para iniciar las consultas
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-auto p-6 sm:p-10">
+        <div class="flex flex-col flex-auto w-full max-w-xs sm:max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-xs sm:max-w-none">
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-36 m-2">
+                    <mat-select
+                        [value]="'all'"
+                        (selectionChange)="filterByCategory($event)">
+                        <mat-option [value]="'all'">Todos</mat-option>
+                        <ng-container *ngFor="let category of categoryCatalog">
+                            <mat-option [value]="category.value">{{category.name}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-64 m-2">
+                    <mat-select 
+                    (selectionChange)="canPost('documentTypeChange')"
+                    [(ngModel)]="documentType">
+                        <mat-option [value]="'CC'">Cedula de Ciudadania</mat-option>
+                        <mat-option [value]="'CE'">Cedula de Extranjeria</mat-option>
+                        <mat-option [value]="'PEP'">Permiso especial de permanencia</mat-option>
+                        <mat-option [value]="'TI'">Tarjeta de identidad</mat-option>
+                        <mat-option [value]="'RC'">Registro civil de nacimiento</mat-option>
+                        <mat-option [value]="'PA'">Pasaporte</mat-option>
+                        <mat-option [value]="'NIT'">NIT</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field
+                    class="fuse-mat-no-subscript w-full sm:w-72 m-2"
+                    [floatLabel]="'always'">
+                    <mat-icon
+                        matPrefix
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                    <input
+                        #falseClick
+                        [(ngModel)]="documento"
+                        (ngModelChange)="canPost()"
+                        placeholder="Ingresa el Documento requerido"
+                        matInput
+                        #query>
+                </mat-form-field>
+              
+                <mat-form-field *ngIf="isPlateFieldVisible()"
+                    class="fuse-mat-no-subscript w-full sm:w-72 mt-4 sm:mt-0 sm:ml-4"
+                    [floatLabel]="'always'">
+                    <mat-icon
+                        matPrefix
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                    <input
+                        [(ngModel)]="plate"
+                        (ngModelChange)="canPost()"
+                        placeholder="Ingresa la Placa del vehiculo"
+                        matInput
+                        #query>
+                </mat-form-field>
+                <mat-form-field *ngIf="needsDate"
+                    class="fuse-mat-no-subscript w-full sm:w-72 mt-4 sm:mt-0 sm:ml-4"
+                    [floatLabel]="'always'">
+                    <input
+                        [(ngModel)]="date"
+                        (ngModelChange)="canPost()"
+                        placeholder="Ingresa la fecha"
+                        type="date"
+                        matInput
+                        #query>
+                </mat-form-field>
+                
+                <button mat-stroked-button
+                        (click)="sendRequest()"
+                        [disabled]="buttonSwitch"
+                        class="mt-8 sm:mt-0 sm:ml-auto"
+                        [color]="'primary'">
+                        Consultar JSON
+                </button>
+                <!-- <button mat-stroked-button
+                        
+                        [disabled]="buttonSwitch"
+                        class="mt-8 sm:mt-0 sm:ml-auto"
+                        [color]="'alert'">
+                        Generar PDF
+                </button> -->
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 sm:mt-10">
+                <div [ngClass]="{'col-span-3': !response,
+                'col-span-1': response}">
+                    <div class="grid grid-cols-1  gap-8 mt-8 sm:mt-10"
+                    [ngClass]="{'sm:grid-cols-2 lg:grid-cols-3': !response,
+                                'sm:grid-cols-1 lg:grid-cols-1': response}"
+                    >
+                
+                        <!-- <ng-container> -->
+                        <ng-container *ngFor="let method of methodsToShow;">
+                            <!-- Course -->
+                            <div (click)="selectedMethod(method)" class="flex flex-col shadow rounded-2xl overflow-hidden bg-card"
+                                [ngClass]="{'border-indigo-500 border-4	' : selectedMethods.indexOf(method) != -1 }">
+                                <div class="flex flex-col p-6">
+                                    <div class="flex items-center justify-between">
+                                        <ng-container> 
+                                            <div
+                                                class="py-0.5 px-3 rounded-full text-sm font-semibold"
+                                                [ngClass]="{'text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500': endpoints[method].categoria === 'runt',
+                                                            'text-green-800 bg-green-100 dark:text-green-50 dark:bg-green-500': endpoints[method].categoria === 'judicial',
+                                                            'text-pink-800 bg-pink-100 dark:text-pink-50 dark:bg-pink-500': endpoints[method].categoria === 'simit',
+                                                            'text-amber-800 bg-amber-100 dark:text-amber-50 dark:bg-amber-500': endpoints[method].categoria === 'ciudadano'}">
+                                                {{endpoints[method].categoria}}
+                                            </div>
+                                        </ng-container>
+                                        <div class="flex items-center">
+                                            <ng-container *ngIf="selectedMethods.indexOf(method) != -1">
+                                                <mat-icon
+                                                    class="icon-size-5 text-blue-600"
+                                                    [svgIcon]="'heroicons_solid:badge-check'"
+                                                    [matTooltip]="'Esta seleccionado este metodo'"></mat-icon>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-lg font-medium">{{endpoints[method].title}}</div>
+                                    <div class="mt-0.5 line-clamp-6 text-secondary">{{endpoints[method].descripcion}}</div>
+                                    <div class="w-12 h-1 my-6 border-t-2"></div>
+                                    <div class="flex items-center leading-5 text-md text-secondary">
+                                        <mat-icon
+                                            class="icon-size-5 text-hint"
+                                            [svgIcon]="'heroicons_solid:globe'"></mat-icon>
+                                        <div class="ml-1.5">{{endpoints[method].url}}</div>
+                                    </div>
+                                    <div class="flex items-center mt-2 leading-5 text-md text-secondary">
+                                        <mat-icon
+                                            class="icon-size-5 text-hint"
+                                            [svgIcon]="'heroicons_solid:document-text'"></mat-icon>
+                                        <ng-container>
+                                            <div class="ml-1.5">
+                                                <span>{{endpoints[method].documentosPermitido}}</span>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <!-- Footer -->
+                                <!-- <div class="flex flex-col w-full mt-auto">
+                    
+                                </div> -->
+                            </div>
+                        </ng-container>
+                        
+                    </div>
+                </div>
+                
+                <div [ngClass]="{'col-span-0': !response,
+                                'col-span-2': response}">
+                    <ng-container>
+                        <div class="flex flex-col shadow rounded-2xl bg-card mt-8 sm:mt-10">
+                            <div class="flex flex-col p-6">
+                                <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+                                <div class="px-6 py-4  bg-gray-800 text-white dark:bg-transparent"  *ngIf="response">
+                                    <pre style="overflow: scroll !important;">
+                                        <code>
+                                        {{jsonResponse | json}}
+                                    </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>

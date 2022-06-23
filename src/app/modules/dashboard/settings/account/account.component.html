@@ -1,0 +1,143 @@
+<div class="w-full max-w-3xl">
+
+    <!-- Form -->
+    <form [formGroup]="accountForm">
+
+        <!-- Section -->
+        <div class="w-full">
+            <div class="text-xl">Perfil</div>
+            <div class="text-secondary">Información de tu cuenta en Verifik, todo es confidencial.</div>
+        </div>
+        <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
+            <!-- Name -->
+            <div class="sm:col-span-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nombre</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:user'" matPrefix></mat-icon>
+                    <input [formControlName]="'name'" matInput>
+                </mat-form-field>
+            </div>
+
+            <!-- DocumentType -->
+            <div class="sm:col-span-2">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tipo de Documento</mat-label>
+                    <mat-select matInput name="documentType" formControlName="documentType" class="simplified" required>
+                        <mat-option [value]="documentType"
+                            *ngFor="let documentType of ['CC', 'CE','PEP', 'TI', 'RC','PA']">
+                            {{documentType}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- Phone -->
+            <div class="sm:col-span-2">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Documento</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:book-open'" matPrefix></mat-icon>
+                    <input [formControlName]="'documentNumber'" matInput>
+                </mat-form-field>
+            </div>
+
+            <!-- Company -->
+            <div class="sm:col-span-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Compañia</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:office-building'" matPrefix></mat-icon>
+                    <input [formControlName]="'company'" matInput>
+                </mat-form-field>
+            </div>
+            <!-- Direccion -->
+            <div class="sm:col-span-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Direccion</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:location-marker'" matPrefix></mat-icon>
+                    <input [formControlName]="'address'" matInput>
+                </mat-form-field>
+            </div>
+            <!-- About -->
+            <!-- <div class="sm:col-span-4">
+                <mat-form-field class="fuse-mat-textarea fuse-mat-no-subscript w-full">
+                    <mat-label>About</mat-label>
+                    <textarea
+                        matInput
+                        [formControlName]="'about'"
+                        matTextareaAutosize
+                        [matAutosizeMinRows]="5"></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-md text-hint">Brief description for your profile. Basic HTML and Emoji are allowed.</div>
+            </div> -->
+        </div>
+
+        <!-- Divider -->
+        <div class="my-10 border-t"></div>
+
+        <!-- Section -->
+        <div class="w-full">
+            <div class="text-xl">Comunicación</div>
+            <div class="text-secondary">La informacion de contacto sera almacenada de forma privada, solo para el uso de
+                Verifik.</div>
+        </div>
+        <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
+            <!-- Email -->
+            <div class="sm:col-span-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Email</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:mail'" matPrefix></mat-icon>
+                    <input [formControlName]="'email'" matInput>
+                </mat-form-field>
+            </div>
+            <!-- Country -->
+            <div class="sm:col-span-2">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Prefijo</mat-label>
+                    <mat-select matInput name="countryCode" formControlName="countryCode" class="simplified" required>
+                        <mat-option [value]="countryCode.code" *ngFor="let countryCode of countryCodes">
+                            {{countryCode.code}} {{countryCode.name}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- Phone -->
+            <div class="sm:col-span-2">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Phone</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:phone'" matPrefix></mat-icon>
+                    <input [formControlName]="'phone'" matInput readonly>
+                </mat-form-field>
+            </div>
+            <!-- Language -->
+            <!-- <div class="sm:col-span-2">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Language</mat-label>
+                    <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:globe-alt'"
+                        matPrefix></mat-icon>
+                    <mat-select [formControlName]="'language'">
+                        <mat-option [value]="'english'">English</mat-option>
+                        <mat-option [value]="'french'">French</mat-option>
+                        <mat-option [value]="'spanish'">Spanish</mat-option>
+                        <mat-option [value]="'german'">German</mat-option>
+                        <mat-option [value]="'italian'">Italian</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> -->
+        </div>
+
+        <!-- Divider -->
+        <div class="mt-11 mb-10 border-t"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end">
+            <button mat-stroked-button type="button">
+                Cancel
+            </button>
+            <button class="ml-4" mat-flat-button type="button" (click)="sendData()" [color]="'primary'">Save
+            </button>
+        </div>
+    </form>
+
+</div>
