@@ -5,7 +5,6 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { UserService } from 'app/core/user/user.service';
 import { environment } from 'environments/environment';
 
-
 @Injectable()
 export class AuthService
 {
@@ -52,7 +51,7 @@ export class AuthService
      */
     forgotPassword(phone: any): Observable<any>
     {
-        return this._httpClient.post(this.baseUrl + 'v2/auth/client/request-otp', phone);
+        return this._httpClient.post('http://localhost:3000/v2/auth/client/request-otp', phone);
     }
 
     /**
@@ -62,7 +61,7 @@ export class AuthService
      */
     resetPassword(data: any): Observable<any>
     {
-        return this._httpClient.post(this.baseUrl + 'v2/auth/client/recovery-otp', data)
+        return this._httpClient.post('http://localhost:3000/v2/auth/client/recovery-otp', data);
     }
 
     /**
@@ -73,12 +72,15 @@ export class AuthService
     signIn(credentials: { email: string; password: string }): Observable<any>
     {
         // Throw error, if the user is already logged in
-        if ( this._authenticated )
+        if (this._authenticated)
         {
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post(this.baseUrl + 'v2/auth/login', credentials).pipe(
+        return this._httpClient.post('http://localhost:3000/v2/auth/signin', credentials).pipe(
+            catchError(() =>
+                of(false)
+            ),
             switchMap((response: any) => {
                 localStorage.setItem('accessToken', response.accessToken);
 
@@ -101,7 +103,7 @@ export class AuthService
     {
         const accessToken = localStorage.getItem('accessToken');
         
-        return this._httpClient.post(this.baseUrl + 'v2/auth/session', {
+        return this._httpClient.post('http://localhost:3000/v2/auth/session', {
             accessToken,
         }, {
             headers: {
@@ -153,7 +155,7 @@ export class AuthService
      */
     signUp(client: { name: string; email: string; password: string; phone: string }): Observable<any>
     {
-        return this._httpClient.post(this.baseUrl + 'v2/auth/signup', client, {}).pipe(
+        return this._httpClient.post('http://localhost:3000/v2/auth/signup', client, {}).pipe(
             catchError(() =>
                 of(false)
             ),
